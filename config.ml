@@ -106,7 +106,7 @@ let unipi =
 let stack = generic_stackv4v6 default_network
 
 let git_client =
-  let dns = generic_dns_client stack in
+  let dns = generic_dns_client ~nameservers:["udp:1.1.1.1:53"] stack in
   let git = git_happy_eyeballs stack dns (generic_happy_eyeballs stack dns) in
   let tcp = tcpv4v6_of_stackv4v6 stack in
   merge_git_clients (git_tcp tcp git)
