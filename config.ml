@@ -12,6 +12,10 @@ let remote =
   in
   Key.(create "remote" Arg.(required string doc))
 
+let nameservers =
+  let doc = Key.Arg.info ~doc:"Nameserver." [ "nameserver" ] in
+  Key.(create "nameserver" Arg.(opt_all string doc))
+  
 let port =
   let doc = Key.Arg.info ~doc:"HTTP listen port." ["port"] in
   Key.(create "port" Arg.(opt int 80 doc))
@@ -96,7 +100,7 @@ let unipi =
       v hostname; v production;
       v cert_seed; v cert_key_type; v cert_bits;
       v account_seed; v account_key_type; v account_bits;
-      v email;
+      v email; v nameservers;
     ])
   in
   foreign "Unikernel.Main"
@@ -106,7 +110,7 @@ let unipi =
 let stack = generic_stackv4v6 default_network
 
 let git_client =
-  let dns = generic_dns_client ~nameservers:["udp:1.1.1.1:53"] stack in
+  let dns = generic_dns_client ~nameservers stack in
   let git = git_happy_eyeballs stack dns (generic_happy_eyeballs stack dns) in
   let tcp = tcpv4v6_of_stackv4v6 stack in
   merge_git_clients (git_tcp tcp git)
